@@ -6,9 +6,22 @@ function Register() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    function handleSubmit(e) {
+    function handleSubmit(e: { preventDefault: () => void; }) {
         e.preventDefault();
-        console.log(email + " " + password + " " + confirmPassword);
+        fetch("http://localhost:8080/auth/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password,
+                confirmPassword: confirmPassword,
+            }),
+        })
+            .then((response: Response) => {
+                console.log(response);
+            });
     }
     return (
         <div className="w-screen h-screen font-family">
@@ -61,7 +74,7 @@ function Register() {
                         <button
                             onClick={handleSubmit}
                             className="w-102 h-10 cursor-pointer bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md ring-1 ring-blue-300 transition duration-300 ease-in-out">
-                            Sign in
+                            Sign Up
                         </button>
                     </div>
                     <div className="flex items-center justify-center mt-3 gap-1.5 text-gray-500">
