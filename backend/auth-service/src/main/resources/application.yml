@@ -8,6 +8,8 @@ spring:
     hibernate:
       ddl-auto: create-drop
     show-sql: true
-
+  application:
+    name: auth-service
 server:
   port: 8081
+

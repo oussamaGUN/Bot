@@ -23,7 +23,7 @@ spring:
         - id: auth-service
           uri: http://auth-service:8081
           predicates:
-            - Path=/auth/**
+            - Path=/auth/**, /oauth2/**, /login/**
         - id: chat-service
           uri: http://chat-service:8082
           predicates:

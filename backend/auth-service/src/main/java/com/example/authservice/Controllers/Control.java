@@ -8,9 +8,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.http.HttpResponse;
+import java.util.Map;
 
 
 @RestController
@@ -26,9 +28,9 @@ public class Control {
     private ResponseEntity<String > register(@RequestBody RegisterRequest registerRequest) {
         return this.logic.register(registerRequest);
     }
-    @PostMapping("/login")
-    private ResponseEntity<String > login(HttpServletResponse response, @RequestBody Users users) {
-        return this.logic.login(response, users);
+    @PostMapping("/signin")
+    private ResponseEntity<String > signin(HttpServletResponse response, @RequestBody Users users) {
+        return this.logic.signin(response, users);
     }
     @GetMapping("/get-user/{id}")
     private ResponseEntity<Users> getUserById(@PathVariable Long id) {
