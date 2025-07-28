@@ -2,6 +2,7 @@ import {Github ,Chrome} from "lucide-react";
 import {useState} from "react";
 import IridescenceMemo from "./IridescenceMemo.tsx";
 import { useNavigate } from 'react-router-dom';
+import {Google} from "./Google.tsx";
 
 
 function Register() {
@@ -120,15 +121,7 @@ function Register() {
                         <div className="h-0.5 bg-gray-400 w-40"></div>
                     </div>
                     <div className="flex items-center justify-center gap-5 mt-3 text-blue-900">
-                        <button
-                            className="w-50 h-10 cursor-pointer  font-semibold rounded-lg shadow-md ring-1 flex justify-center items-center gap-1.5">
-                            <Chrome size={20}/>
-                            Google
-                        </button>
-                        <button
-                            className="w-50 h-10 cursor-pointer  font-semibold rounded-lg shadow-md ring-1 flex justify-center items-center gap-1.5">
-                            <Github size={20}/> GitHub
-                        </button>
+                        <Google />
                     </div>
                 </div>
             </div>

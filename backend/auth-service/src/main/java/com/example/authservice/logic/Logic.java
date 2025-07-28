@@ -81,4 +81,15 @@ public class Logic {
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("needs to login");
     }
+
+    public ResponseEntity<String> google(HttpServletResponse response, String email) {
+        System.out.println("email: " + email);
+        String access_token = this.jwtUtil.generateToken(email);
+        String refresh_token = this.jwtUtil.generateRefreshToken(email);
+        this.cookieUtil.setTokenCookie(response, "access_token", access_token);
+        this.cookieUtil.setTokenCookie(response, "refresh_token", refresh_token);
+        System.out.println(access_token);
+        System.out.println(refresh_token);
+        return ResponseEntity.status(HttpStatus.OK).body("logged successfully");
+    }
 }

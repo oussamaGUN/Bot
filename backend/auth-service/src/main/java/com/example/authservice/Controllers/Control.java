@@ -32,6 +32,10 @@ public class Control {
     private ResponseEntity<String > signin(HttpServletResponse response, @RequestBody Users users) {
         return this.logic.signin(response, users);
     }
+    @PostMapping("/google-log")
+    private ResponseEntity<String > google_log(HttpServletResponse response, @RequestBody Users users) {
+        return this.logic.google(response, users.getEmail());
+    }
     @GetMapping("/get-user/{id}")
     private ResponseEntity<Users> getUserById(@PathVariable Long id) {
         return this.logic.getUserById(id);
