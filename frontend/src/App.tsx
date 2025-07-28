@@ -3,7 +3,7 @@ import Home from './pages/Home/Home';
 import './index.css';
 import Signin from "./pages/form/Signin.tsx";
 import Register from "./pages/form/Register.tsx";
-import Dashboard from "./pages/dashboard/Dashboard.tsx";
+import Dashboard from "./pages/workflow/Workflow.tsx";
 
 function App() {
 
