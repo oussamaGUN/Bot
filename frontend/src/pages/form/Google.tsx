@@ -33,9 +33,9 @@ export function Google() {
                 }).then(res => {
                     if (res.ok) {
                         setWelcome(true);
-                        // setTimeout(() => {
-                        //     navigate('/dashboard')
-                        // }, 2000)
+                        setTimeout(() => {
+                            navigate('/workflow');
+                        }, 2000)
                     }
                 })
             } catch (err) {

@@ -1,29 +1,55 @@
 import { useState } from "react";
 import { useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { Send } from "lucide-react";
 function MainBody() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [response, setResponse] = useState([]);
   const [loading, setLoading] = useState(false);
-  const handleSend = (input: string) => {
-    fetch("http://localhost:8080/api/prompt", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({ prompt: input }),
-    })
-      .then((res) => res.text())
-      .then((data) => {
-        setResponse([...response, data]);
-        // setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-        // setLoading(false);
+  const navigate = useNavigate();
+
+  const handleSend = async (input: string) => {
+    try {
+      let res = await fetch("http://localhost:8080/api/prompt", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ prompt: input }),
       });
+
+      // If unauthorized, try to refresh token
+      if (res.status === 401) {
+        const refreshRes = await fetch(
+          "http://localhost:8080/auth/new-accessToken",
+          {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+          }
+        );
+
+        if (refreshRes.status === 201) {
+          // Retry the original request
+          res = await fetch("http://localhost:8080/api/prompt", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ prompt: input }),
+          });
+        } else {
+          navigate("/signin");
+          return;
+        }
+      }
+
+      const data = await res.text();
+      setResponse((prev) => [...prev, data]);
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
+
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -35,39 +61,69 @@ function MainBody() {
   }, [messages, response]);
   return (
     <div className="bg-bg text-text-secondary w-screen font-family">
+      {messages.length === 0 && (
+        <div className="flex items-end justify-center  h-1/2 absolute w-[50%] left-[30%]">
+          <h1 className="text-2xl text-text-blue">Welcome to the Bot — 99% confidence, 1% accuracy <span 
+            className="text-sm"> <br /> (I'm broke can't afford neither OpenAI tokens or strong GPU)</span></h1>
+        </div>
+      )}
       <div
         ref={containerRef}
-        className="w-240 h-210 overflow-y-auto hide-scrollbar items-center justify-center mx-auto mt-10"
+        className="w-230 h-210 overflow-y-auto hide-scrollbar items-center justify-center mx-auto mt-10 "
         style={{ position: "relative" }}
       >
         {messages.map((message, index) => (
           <div key={index} className="p-4 border-b border-gray-200">
-            <p className="text-lg p-5 break-words ml-80 mt-10 rounded-2xl bg-gray-300">
-              {message}
-            </p>
-            <p className="text-lg break-words mr-80 mt-5">
+            <div className="flex flex-col items-end">
+              <p className="inline-block text-lg p-5 break-words mt-10 rounded-2xl bg-gray-300 max-w-200">
+                {message}
+              </p>
+            </div>
+
+            <p className="w-200 text-lg break-words mr-80 mt-5">
               {response[index] ? response[index] : "thinking..."}
             </p>
           </div>
         ))}
       </div>
-      <div className="p-4 absolute bottom-0 left-0 right-0 bg-white">
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          className="border border-gray-300 p-2 rounded w-full"
-        />
-        <button
-          onClick={() => {
-            setMessages([...messages, input]);
-            setInput("");
-            handleSend(input);
-          }}
-          className="bg-blue-500 text-white p-2 rounded mt-2"
-        >
-          Send
-        </button>
+      <div className="flex flex-col items-center justify-center mt-5">
+        <div className="p-4 w-230 flex justify-center items-center gap-2 ">
+          <form
+            className="w-full"
+            onSubmit={(e) => {
+              e.preventDefault(); // prevent default form submission
+              setMessages([...messages, input]);
+              handleSend(input); // call your send function
+              setInput(""); // optionally clear the input
+            }}
+          >
+            <textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault(); // prevent newline
+                  setMessages([...messages, input]);
+                  handleSend(input); // call send function
+                  setInput(""); // optionally clear
+                }
+              }}
+              className="w-full p-4 border border-gray-300 rounded-lg 
+                focus:outline-none focus:ring-2 focus:ring-blue-500 break-words resize-none"
+              placeholder="Type your message here..."
+            />
+          </form>
+          <button
+            onClick={() => {
+              setMessages([...messages, input]);
+              setInput("");
+              handleSend(input);
+            }}
+            className="text-text-blue cursor-pointer mb-10 "
+          >
+            <Send />
+          </button>
+        </div>
       </div>
     </div>
   );

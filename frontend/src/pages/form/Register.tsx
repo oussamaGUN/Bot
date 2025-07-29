@@ -51,7 +51,7 @@ function Register() {
                     setPasswordMismatch(false);
                     setWelcome(true);
                     setTimeout(() => {
-                        navigate("/signin");
+                        navigate("/workflow");
                     }, 2000);
                 }
                 console.log(data); // your JSON response

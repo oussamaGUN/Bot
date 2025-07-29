@@ -3,7 +3,7 @@ import Home from './pages/Home/Home';
 import './index.css';
 import Signin from "./pages/form/Signin.tsx";
 import Register from "./pages/form/Register.tsx";
-import Dashboard from "./pages/workflow/Workflow.tsx";
+import Workflow from "./pages/workflow/Workflow.tsx";
 
 function App() {
 
@@ -14,7 +14,7 @@ function App() {
             <Route index element={<Home />} />
             <Route path="/signin" element={<Signin />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/workflow" element={<Workflow />} />
         </Routes>
       </BrowserRouter>      
     </>

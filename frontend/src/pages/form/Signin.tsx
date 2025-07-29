@@ -37,8 +37,10 @@ function Signin() {
                 {
                     setInvalidEmail(false);
                     setWelcome(true);
+                    setTimeout(() => {
+                        navigate("/workflow");
+                    }, 2000);
                 }
-                console.log(data); // your JSON response
             })
     }
     return (
