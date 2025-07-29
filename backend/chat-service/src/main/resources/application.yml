@@ -1,17 +1,17 @@
 spring:
   application:
     name: chat-history
-  cassandra:
-    keyspace-name: BOT
-    contact-points: cassandra
-    port: 9042
-    local-datacenter: datacenter1
-    schema-action: create_if_not_exists
+#  cassandra:
+#    keyspace-name: BOT
+#    contact-points: cassandra
+#    port: 9042
+#    local-datacenter: datacenter1
+#    schema-action: create_if_not_exists
   ai:
     ollama:
-      base-url: http://host.docker.internal:11434
+      base-url: http://ollama-service:11434
       chat:
         options:
-          model: tinyllama:1.1b-chat
+          model: tinyllama:1.1b
 server:
   port: 8082

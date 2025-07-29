@@ -29,11 +29,13 @@ services:
     build:
       context: backend/chat-service
       dockerfile: Dockerfile
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "8082:8080"
-    depends_on:
-      cassandra:
-        condition: service_healthy
+    # depends_on:
+    #   cassandra:
+    #     condition: service_healthy
     networks:
       - app-network
 
@@ -53,24 +55,24 @@ services:
     networks:
       - app-network
 
-  cassandra:
-    image: cassandra:latest
-    ports:
-      - "9042:9042"
-    environment:
-      CASSANDRA_CLUSTER_NAME: "MyCluster"
-      CASSANDRA_DC: "datacenter1"
-      CASSANDRA_RACK: "rack1"
-      CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
-    networks:
-      - app-network
-    volumes:
-      - cassandra-data:/var/lib/cassandra
-    healthcheck:
-      test: [ "CMD", "cqlsh", "-e", "describe keyspaces" ]
-      interval: 10s
-      timeout: 5s
-      retries: 10
+  # cassandra:
+  #   image: cassandra:latest
+  #   ports:
+  #     - "9042:9042"
+  #   environment:
+  #     CASSANDRA_CLUSTER_NAME: "MyCluster"
+  #     CASSANDRA_DC: "datacenter1"
+  #     CASSANDRA_RACK: "rack1"
+  #     CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
+  #   networks:
+  #     - app-network
+  #   volumes:
+  #     - cassandra-data:/var/lib/cassandra
+  #   healthcheck:
+  #     test: [ "CMD", "cqlsh", "-e", "describe keyspaces" ]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 10
   front:
     container_name: front-end
     build:
@@ -85,9 +87,19 @@ services:
       - CHOKIDAR_USEPOLLING=true
     networks:
       - app-network
-
+  # ollama:
+  #   container_name: ollama-service
+  #   image: ollama/ollama:latest
+  #   # entrypoint: bash
+  #   # command: 
+  #   #   -c "ollama serve && ollama pull tinyllama:1.1b-chat"
+  #   ports:
+  #     - "11434:11434"
+  #   networks:
+  #     - app-network
+    
 networks:
   app-network:
     driver: bridge
-volumes:
-  cassandra-data:
+# volumes:
+  # cassandra-data:
