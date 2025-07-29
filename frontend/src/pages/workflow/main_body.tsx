@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import { useEffect, useRef } from "react";
 function MainBody() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -12,7 +12,7 @@ function MainBody() {
         "Content-Type": "application/json",
       },
       credentials: "include",
-      body: JSON.stringify({ prompt:  input}),
+      body: JSON.stringify({ prompt: input }),
     })
       .then((res) => res.text())
       .then((data) => {
@@ -24,25 +24,34 @@ function MainBody() {
         // setLoading(false);
       });
   };
+  const containerRef = useRef(null);
 
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    // Scroll to bottom when messages or responses change
+    container.scrollTop = container.scrollHeight;
+  }, [messages, response]);
   return (
     <div className="bg-bg text-text-secondary w-screen font-family">
-      <div className="p-4 text-center text-2xl mt-20 text-text-black">
-        /(^_^)/
-      </div>
-      <div className=" w-220 h-120 overflow-y-auto items-center justify-center mx-auto mt-10 rounded-lg shadow-lg">
+      <div
+        ref={containerRef}
+        className="w-240 h-210 overflow-y-auto hide-scrollbar items-center justify-center mx-auto mt-10"
+        style={{ position: "relative" }}
+      >
         {messages.map((message, index) => (
-          <div key={index} className="p-4 border-b border-gray-200 ">
-            <p className="text-lg  break-words bg-amber-400 ml-80 mt-10">
+          <div key={index} className="p-4 border-b border-gray-200">
+            <p className="text-lg p-5 break-words ml-80 mt-10 rounded-2xl bg-gray-300">
               {message}
             </p>
-            <p className="text-lg break-words bg-red-600 mr-80 mt-5">
-              {response[index] ? response[index] : "Loading..."}
+            <p className="text-lg break-words mr-80 mt-5">
+              {response[index] ? response[index] : "thinking..."}
             </p>
           </div>
         ))}
       </div>
-      <div className="p-4">
+      <div className="p-4 absolute bottom-0 left-0 right-0 bg-white">
         <input
           type="text"
           value={input}
@@ -54,7 +63,6 @@ function MainBody() {
             setMessages([...messages, input]);
             setInput("");
             handleSend(input);
-            
           }}
           className="bg-blue-500 text-white p-2 rounded mt-2"
         >
