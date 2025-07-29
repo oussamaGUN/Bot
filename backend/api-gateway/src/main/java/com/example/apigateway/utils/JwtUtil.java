@@ -38,18 +38,15 @@ public class JwtUtil {
 
     public String validateToken(String token) {
         try {
-            return Jwts.parserBuilder()
+            Jws<Claims> claims = Jwts.parserBuilder()
                     .setSigningKey(getSigningKey())
                     .build()
-                    .parseClaimsJws(token)
-                    .getBody()
-                    .getSubject();
+                    .parseClaimsJws(token);
+
+            return claims.getBody().getSubject();
         } catch (ExpiredJwtException e) {
-            // Token is expired
             return "EXPIRED";
-        } catch (UnsupportedJwtException | MalformedJwtException |
-                 SignatureException | IllegalArgumentException e) {
-            // Invalid token
+        } catch (JwtException | IllegalArgumentException e) {
             return "INVALID";
         }
     }

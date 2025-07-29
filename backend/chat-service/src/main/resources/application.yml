@@ -1,12 +1,15 @@
 spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/postgres
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
   application:
     name: chat-history
-#  cassandra:
-#    keyspace-name: BOT
-#    contact-points: cassandra
-#    port: 9042
-#    local-datacenter: datacenter1
-#    schema-action: create_if_not_exists
   ai:
     ollama:
       base-url: http://ollama-service:11434

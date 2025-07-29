@@ -31,9 +31,9 @@ public class Logic {
 
     public ResponseEntity<String> register(RegisterRequest registerRequest) {
         if (this.usersRepo.existsByEmail(registerRequest.getEmail()))
-            return ResponseEntity.status(HttpStatus.OK).body("email already exist");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("email already exist");
         if (!registerRequest.getPassword().equals(registerRequest.getConfirmPassword()))
-            return ResponseEntity.status(HttpStatus.OK).body("not matching passwords");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("not matching passwords");
         Users user = new Users();
         user.setEmail(registerRequest.getEmail());;
         user.setPassword(this.passwordEncoder.encode(registerRequest.getPassword()));
@@ -43,10 +43,10 @@ public class Logic {
 
     public ResponseEntity<String > signin(HttpServletResponse response, Users user) {
         if (!this.usersRepo.existsByEmail(user.getEmail()))
-            return ResponseEntity.status(HttpStatus.OK).body("email not found");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("email not found");
         Users current_user = this.usersRepo.getUsersByEmail(user.getEmail());
         if (!this.passwordEncoder.matches(user.getPassword(), current_user.getPassword()))
-            return ResponseEntity.status(HttpStatus.OK).body("invalid password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("invalid password");
         String access_token = this.jwtUtil.generateToken(user.getEmail());
         String refresh_token = this.jwtUtil.generateRefreshToken(user.getEmail());
         this.cookieUtil.setTokenCookie(response, "access_token", access_token);
@@ -83,7 +83,6 @@ public class Logic {
     }
 
     public ResponseEntity<String> google(HttpServletResponse response, String email) {
-        System.out.println("email: " + email);
         String access_token = this.jwtUtil.generateToken(email);
         String refresh_token = this.jwtUtil.generateRefreshToken(email);
         this.cookieUtil.setTokenCookie(response, "access_token", access_token);

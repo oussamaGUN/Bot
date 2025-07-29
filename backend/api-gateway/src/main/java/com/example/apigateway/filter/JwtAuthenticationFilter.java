@@ -35,12 +35,13 @@ public class JwtAuthenticationFilter implements GatewayFilter {
             access_token = cookie.getValue();
             if (this.jwtUtil.validateToken(access_token).equals("INVALID"))
             {
-                exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                System.out.println("invalid token");
+                exchange.getResponse().setStatusCode(HttpStatus.CONFLICT);
                 return exchange.getResponse().setComplete();
             }
             else if (this.jwtUtil.validateToken(access_token).equals("EXPIRED"))
             {
-                exchange.getResponse().setStatusCode(HttpStatus.REQUEST_TIMEOUT);
+                exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 return exchange.getResponse().setComplete();
             }
         } else {

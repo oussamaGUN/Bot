@@ -2,8 +2,8 @@ package com.example.chathistory.logic;
 
 import com.example.chathistory.ai.AiModel;
 import com.example.chathistory.models.Prompt;
-//import com.example.chathistory.models.Queries;
-//import com.example.chathistory.repository.QueryRepository;
+import com.example.chathistory.models.Queries;
+import com.example.chathistory.repository.QueryRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -11,16 +11,20 @@ import java.util.UUID;
 @Service
 public class Logic {
     private final AiModel aiModel;
-//    private final QueryRepository queryRepository;
-    public Logic(AiModel aiModel) {
+    private final QueryRepository queryRepository;
+    public Logic(AiModel aiModel, QueryRepository queryRepository) {
         this.aiModel = aiModel;
-//        this.queryRepository = queryRepository;
+        this.queryRepository = queryRepository;
     }
 
-    public String aiResponse(Prompt prompt) {
-        //        System.out.println(response);
-//        this.queryRepository.save(new Queries(UUID.randomUUID(), prompt.getPrompt(), response));
-        return aiModel.response(prompt.getPrompt());
+    public String aiResponse(Prompt prompt, String email) {
+        String response = aiModel.response(prompt.getPrompt());
+        Queries queries = new Queries();
+        queries.setEmail(email);
+        queries.setPrompt(prompt.getPrompt());
+        queries.setResponse(response);
+        this.queryRepository.save(queries);
+        return response;
     }
 
 
