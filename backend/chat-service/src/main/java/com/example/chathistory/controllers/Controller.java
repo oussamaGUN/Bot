@@ -16,7 +16,7 @@ public class Controller {
         this.logic = logic;
     }
 
-    @GetMapping("/prompt")
+    @PostMapping("/prompt")
     private String prompt(@RequestBody Prompt prompt) {
         return this.logic.aiResponse(prompt);
     }
