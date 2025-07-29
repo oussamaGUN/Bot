@@ -33,7 +33,13 @@ services:
       - "host.docker.internal:host-gateway"
     ports:
       - "8082:8080"
-    # depends_on:
+    depends_on:
+      - auth
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
     #   cassandra:
     #     condition: service_healthy
     networks:
@@ -102,4 +108,4 @@ networks:
   app-network:
     driver: bridge
 # volumes:
-  # cassandra-data:
+#   cassandra-data:
