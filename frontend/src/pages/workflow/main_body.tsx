@@ -2,12 +2,63 @@ import { useState } from "react";
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Send } from "lucide-react";
-function MainBody() {
-  const [messages, setMessages] = useState([]);
+interface MessageEntry {
+  input: string;
+  token: string;
+}
+function MainBody({ token }: { token: string }) {
+  const [messages, setMessages] = useState<MessageEntry[]>([]);
   const [input, setInput] = useState("");
-  const [response, setResponse] = useState([]);
+  const [response, setResponse] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  useEffect(() => {
+    // Fetch initial messages for the token
+    const fetchMessages = async () => {
+      try {
+        const res = await fetch(`http://localhost:8080/api/queries`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+        });
+
+        if (res.status === 401) {
+          const refreshRes = await fetch(
+            "http://localhost:8080/auth/new-accessToken",
+            {
+              method: "GET",
+              headers: { "Content-Type": "application/json" },
+              credentials: "include",
+            }
+          );
+
+          if (refreshRes.status === 201) {
+            // Retry fetching messages
+            return fetchMessages();
+          } else {
+            navigate("/signin");
+            return;
+          }
+        }
+
+        const data = await res.json();
+        const formattedMessages: MessageEntry[] = data.map((msg: any) => ({
+          input: msg.prompt,
+          token: msg.workflowId,
+        }));
+        setMessages(formattedMessages);
+        const initialResponses = data.map((msg: any) => msg.response);
+        setResponse(initialResponses);
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
+    };
+
+    fetchMessages();
+  }, [token, navigate]);
+  useEffect(() => {
+    // console.log("messages:", messages);
+  }, [messages]);
 
   const handleSend = async (input: string) => {
     try {
@@ -15,7 +66,7 @@ function MainBody() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ prompt: input }),
+        body: JSON.stringify({ prompt: input, workflowId: token }),
       });
 
       // If unauthorized, try to refresh token
@@ -35,7 +86,7 @@ function MainBody() {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
-            body: JSON.stringify({ prompt: input }),
+            body: JSON.stringify({ prompt: input, workflowId: token }),
           });
         } else {
           navigate("/signin");
@@ -61,10 +112,16 @@ function MainBody() {
   }, [messages, response]);
   return (
     <div className="bg-bg text-text-secondary w-screen font-family">
-      {messages.length === 0 && (
+      {messages.filter((msg) => msg.token === token).length === 0 && (
         <div className="flex items-end justify-center  h-1/2 absolute w-[50%] left-[30%]">
-          <h1 className="text-2xl text-text-blue">Welcome to the Bot — 99% confidence, 1% accuracy <span 
-            className="text-sm"> <br /> (I'm broke can't afford neither OpenAI tokens or strong GPU)</span></h1>
+          <h1 className="text-2xl text-text-blue">
+            Welcome to the Bot — 99% confidence, 1% accuracy{" "}
+            <span className="text-sm">
+              {" "}
+              <br /> (I'm broke can't afford neither OpenAI tokens or strong
+              GPU)
+            </span>
+          </h1>
         </div>
       )}
       <div
@@ -72,19 +129,21 @@ function MainBody() {
         className="w-230 h-210 overflow-y-auto hide-scrollbar items-center justify-center mx-auto mt-10 "
         style={{ position: "relative" }}
       >
-        {messages.map((message, index) => (
-          <div key={index} className="p-4 border-b border-gray-200">
-            <div className="flex flex-col items-end">
-              <p className="inline-block text-lg p-5 break-words mt-10 rounded-2xl bg-gray-300 max-w-200">
-                {message}
+        {messages.map((message, index) =>
+          message.token !== token ? null : (
+            <div key={index} className="p-4 border-b border-gray-200">
+              <div className="flex flex-col items-end">
+                <p className="inline-block text-lg p-5 break-words mt-10 rounded-2xl bg-gray-300 max-w-200">
+                  {message.input}
+                </p>
+              </div>
+
+              <p className="w-200 text-lg break-words mr-80 mt-5">
+                {response[index] ? response[index] : "thinking..."}
               </p>
             </div>
-
-            <p className="w-200 text-lg break-words mr-80 mt-5">
-              {response[index] ? response[index] : "thinking..."}
-            </p>
-          </div>
-        ))}
+          )
+        )}
       </div>
       <div className="flex flex-col items-center justify-center mt-5">
         <div className="p-4 w-230 flex justify-center items-center gap-2 ">
@@ -92,7 +151,11 @@ function MainBody() {
             className="w-full"
             onSubmit={(e) => {
               e.preventDefault(); // prevent default form submission
-              setMessages([...messages, input]);
+              const newMessage: MessageEntry = {
+                input,
+                token,
+              };
+              setMessages((prev) => [...prev, newMessage]);
               handleSend(input); // call your send function
               setInput(""); // optionally clear the input
             }}
@@ -103,7 +166,11 @@ function MainBody() {
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault(); // prevent newline
-                  setMessages([...messages, input]);
+                  const newMessage: MessageEntry = {
+                    input,
+                    token,
+                  };
+                  setMessages((prev) => [...prev, newMessage]);
                   handleSend(input); // call send function
                   setInput(""); // optionally clear
                 }
@@ -115,7 +182,11 @@ function MainBody() {
           </form>
           <button
             onClick={() => {
-              setMessages([...messages, input]);
+              const newMessage: MessageEntry = {
+                input,
+                token,
+              };
+              setMessages((prev) => [...prev, newMessage]);
               setInput("");
               handleSend(input);
             }}
