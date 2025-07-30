@@ -83,6 +83,7 @@ public class Logic {
     }
 
     public ResponseEntity<String> google(HttpServletResponse response, String email) {
+
         String access_token = this.jwtUtil.generateToken(email);
         String refresh_token = this.jwtUtil.generateRefreshToken(email);
         this.cookieUtil.setTokenCookie(response, "access_token", access_token);
