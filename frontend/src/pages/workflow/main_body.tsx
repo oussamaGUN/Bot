@@ -114,7 +114,7 @@ function MainBody({ token }: { token: string }) {
     <div className="bg-bg text-text-secondary w-screen font-family">
       {messages.filter((msg) => msg.token === token).length === 0 && (
         <div className="flex items-end justify-center  h-1/2 absolute w-[50%] left-[30%]">
-          <h1 className="text-2xl text-text-blue">
+          <h1 className="text-2xl text-text-black">
             Welcome to the Bot — 99% confidence, 1% accuracy{" "}
             <span className="text-sm">
               {" "}
@@ -176,7 +176,7 @@ function MainBody({ token }: { token: string }) {
                 }
               }}
               className="w-full p-4 border border-gray-300 rounded-lg 
-                focus:outline-none focus:ring-2 focus:ring-blue-500 break-words resize-none"
+                focus:outline-none focus:ring-2 focus:ring-text-blue break-words resize-none"
               placeholder="Type your message here..."
             />
           </form>

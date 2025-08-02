@@ -5,6 +5,10 @@
     --color-bg: #e5e7eb;
     --color-text-blue: #3b82f6;
     --color-text-black: #1f2937;
+    --color-text-white: #f9fafb;
+    --color-bg-left-bar: #abafb6;
+    --color-workflow-bg-on: #ef6f48;
+    --color-workflow-bg-off: #d4d5db;
 }
 .hide-scrollbar::-webkit-scrollbar {
   display: none;

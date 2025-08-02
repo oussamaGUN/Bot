@@ -19,6 +19,9 @@ public class Users {
     private String email;
     private String password;
 
+    public Users() {
+    }
+
     public void setEmail(String email) {
         this.email = email;
     }

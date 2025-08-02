@@ -3,16 +3,10 @@ package com.example.authservice.Controllers;
 import com.example.authservice.logic.Logic;
 import com.example.authservice.models.RegisterRequest;
 import com.example.authservice.models.Users;
-import com.example.authservice.repository.UsersRepo;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
-
-import java.net.http.HttpResponse;
-import java.util.Map;
 
 
 @RestController
@@ -43,6 +37,10 @@ public class Control {
     @GetMapping("/new-accessToken")
     private ResponseEntity<String > new_accessToken(HttpServletRequest request, HttpServletResponse response) {
         return this.logic.new_accessToken(request, response);
+    }
+    @GetMapping("/logout")
+    private ResponseEntity<String > logout(HttpServletRequest request, HttpServletResponse response) {
+        return this.logic.logout(request, response);
     }
 }
 

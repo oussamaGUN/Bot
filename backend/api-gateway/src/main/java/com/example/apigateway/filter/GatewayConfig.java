@@ -18,6 +18,9 @@ public class GatewayConfig {
                 .route("chat-service", r -> r.path("/api/**")
                         .filters(f -> f.filter(jwtAuthenticationFilter))
                         .uri("http://chat-service:8082"))
+                .route("profile-service", r -> r.path("/profile/**")
+                        .filters(f -> f.filter(jwtAuthenticationFilter))
+                        .uri("http://profile-service:8083"))
                 .build();
     }
 }

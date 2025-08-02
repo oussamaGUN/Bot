@@ -8,12 +8,12 @@ import com.example.authservice.utils.JwtUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.HttpCookie;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
 
 @Service
 public class Logic {
@@ -21,12 +21,14 @@ public class Logic {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final CookieUtil cookieUtil;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public Logic(UsersRepo usersRepo, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, CookieUtil cookieUtil) {
+    public Logic(UsersRepo usersRepo, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, CookieUtil cookieUtil, KafkaTemplate<String, String> kafkaTemplate) {
         this.usersRepo = usersRepo;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
         this.cookieUtil = cookieUtil;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     public ResponseEntity<String> register(RegisterRequest registerRequest) {
@@ -38,6 +40,7 @@ public class Logic {
         user.setEmail(registerRequest.getEmail());;
         user.setPassword(this.passwordEncoder.encode(registerRequest.getPassword()));
         this.usersRepo.save(user);
+        this.kafkaTemplate.send("email", user.getEmail());
         return ResponseEntity.status(HttpStatus.CREATED).body(user.toString());
     }
 
@@ -83,13 +86,23 @@ public class Logic {
     }
 
     public ResponseEntity<String> google(HttpServletResponse response, String email) {
-
+        Users user = new Users();
+        user.setEmail(email);
+        user.setPassword(null);
+        this.usersRepo.save(user);
         String access_token = this.jwtUtil.generateToken(email);
         String refresh_token = this.jwtUtil.generateRefreshToken(email);
         this.cookieUtil.setTokenCookie(response, "access_token", access_token);
         this.cookieUtil.setTokenCookie(response, "refresh_token", refresh_token);
-        System.out.println(access_token);
-        System.out.println(refresh_token);
+        System.out.println(email);
+        this.kafkaTemplate.send("email", email);
         return ResponseEntity.status(HttpStatus.OK).body("logged successfully");
+    }
+
+    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
+        String email = request.getHeader("email");
+        this.cookieUtil.deleteTokenCookie(response, "access_token", "");
+        this.cookieUtil.deleteTokenCookie(response, "refresh_token", "");
+        return ResponseEntity.status(HttpStatus.OK).body("log out successfully");
     }
 }

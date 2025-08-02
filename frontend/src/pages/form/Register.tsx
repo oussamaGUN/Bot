@@ -67,7 +67,7 @@ function Register() {
             <div className="absolute flex items-center justify-center inset-0 z-20 opacity-80">
                 <div className=" bg-white/90 backdrop-blur-lg w-150 h-150 rounded-4xl">
                     <div className="h-20  flex items-center justify-center ">
-                        <h1 className=" mt-20 text-blue-500 text-4xl font-bold">Sign Up</h1>
+                        <h1 className=" mt-20 text-text-blue text-4xl font-bold">Sign Up</h1>
                     </div>
                     <form onSubmit={handleSubmit}>
                         <div className="h-30  flex items-center justify-center  ">
@@ -77,7 +77,7 @@ function Register() {
                                     placeholder="Email"
                                     required
                                     onChange={(e) => {setEmail(e.target.value)}}
-                                    className="w-100 mt-10 pl-5  py-2 rounded-lg bg-white/100 text-blue-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-lg ring-2 ring-blue-500"
+                                    className="w-100 mt-10 pl-5  py-2 rounded-lg bg-white/100 text-blue-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-text-blue shadow-lg ring-2 ring-text-blue"
                                 />
                         </div>
                         <div className="mt-5 flex items-center justify-center ">
@@ -87,7 +87,7 @@ function Register() {
                                     placeholder="Password"
                                     required
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-100 pl-5  py-2 rounded-lg bg-white/100 text-blue-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-lg ring-2 ring-blue-500"
+                                    className="w-100 pl-5  py-2 rounded-lg bg-white/100 text-blue-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-text-blue shadow-lg ring-2 ring-text-blue"
                                 />
                         </div>
                         <div className="mt-10 flex items-center justify-center ">
@@ -97,7 +97,7 @@ function Register() {
                                     placeholder="Confirm Password"
                                     required
                                     onChange={(e) => setConfirmPassword(e.target.value)}
-                                    className="w-100 pl-5  py-2 rounded-lg bg-white/100 text-blue-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-lg ring-2 ring-blue-500"
+                                    className="w-100 pl-5  py-2 rounded-lg bg-white/100 text-blue-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-text-blue shadow-lg ring-2 ring-text-blue"
                                 />
                         </div>
                         <div className="mt-5 flex items-center justify-center text-blue-900">
@@ -105,7 +105,7 @@ function Register() {
                         </div>
                         <div className="flex items-center justify-center mt-3">
                             <button
-                                className="w-102 h-10 cursor-pointer bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md ring-1 ring-blue-300 transition duration-300 ease-in-out">
+                                className="w-102 h-10 cursor-pointer bg-text-blue hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md ring-1 ring-blue-300 transition duration-300 ease-in-out">
                                 Sign Up
                             </button>
                         </div>

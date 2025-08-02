@@ -30,7 +30,7 @@ function Workflow() {
       const updated = [prev[0], newWorkflow, ...prev.slice(1)];
       return updated;
     });
-    setCurrentWorkflowIndex(0); // select the new one
+    setCurrentWorkflowIndex(1); // select the new one
   };
 
   const handleSelectWorkflow = (index: number) => {

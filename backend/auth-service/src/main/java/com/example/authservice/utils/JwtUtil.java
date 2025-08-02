@@ -1,4 +1,5 @@
 package com.example.authservice.utils;
+
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
@@ -9,7 +10,6 @@ import java.util.Date;
 
 @Service
 public class JwtUtil {
-
     private static final String SECRET_KEY = "supersecretkey12345678901234567890"; // use at least 256 bits
     private static final long EXPIRATION_TIME = 1000 * 60 * 15; // 15 minutes
 
@@ -38,18 +38,15 @@ public class JwtUtil {
 
     public String validateToken(String token) {
         try {
-            return Jwts.parserBuilder()
+            Jws<Claims> claims = Jwts.parserBuilder()
                     .setSigningKey(getSigningKey())
                     .build()
-                    .parseClaimsJws(token)
-                    .getBody()
-                    .getSubject();
+                    .parseClaimsJws(token);
+
+            return claims.getBody().getSubject();
         } catch (ExpiredJwtException e) {
-            // Token is expired
             return "EXPIRED";
-        } catch (UnsupportedJwtException | MalformedJwtException |
-                 SignatureException | IllegalArgumentException e) {
-            // Invalid token
+        } catch (JwtException | IllegalArgumentException e) {
             return "INVALID";
         }
     }

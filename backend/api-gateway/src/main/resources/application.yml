@@ -17,6 +17,7 @@ spring:
               - PUT
               - DELETE
               - OPTIONS
+              - PATCH
             allowedHeaders: "*"
             allowCredentials: true
       routes:
@@ -28,3 +29,7 @@ spring:
           uri: http://chat-service:8082
           predicates:
             - Path=/api/**
+        - id: profile-service
+          uri: http://profile-service:8083
+          predicates:
+            - Path=/profile/**
